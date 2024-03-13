@@ -3,6 +3,7 @@ from wasabi import msg
 
 from goldenverba.components.chunking.interface import Chunker
 from goldenverba.components.chunking.sentencechunker import SentenceChunker
+from goldenverba.components.chunking.javascriptchunker import JavascriptChunker
 from goldenverba.components.chunking.tiktokenchunker import TokenChunker
 from goldenverba.components.chunking.wordchunker import WordChunker
 from goldenverba.components.reader.document import Document
@@ -14,6 +15,7 @@ class ChunkerManager:
             "TokenChunker": TokenChunker(),
             "WordChunker": WordChunker(),
             "SentenceChunker": SentenceChunker(),
+            "JavascriptChunker": JavascriptChunker(),
         }
         self.selected_chunker: Chunker = self.chunker["TokenChunker"]
 

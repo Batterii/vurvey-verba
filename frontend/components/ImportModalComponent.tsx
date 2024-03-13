@@ -37,7 +37,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, apiHost }) => {
     const [filePath, setFilePath] = useState<string>("");
 
     const [docType, setDocType] = useState<string>("Documentation");
-    const [inputFileKey, setInputFileKey] = useState<number>(Date.now());  // Using the current timestamp as the initial key  
+    const [inputFileKey, setInputFileKey] = useState<number>(Date.now());  // Using the current timestamp as the initial key
     const [apiResponse, setApiResponse] = useState<{ status: number, status_msg: string } | null>(null);
 
     useEffect(() => {
@@ -148,8 +148,11 @@ const ImportModal: React.FC<ImportModalProps> = ({ onClose, apiHost }) => {
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
         accept: {
-            'text/txt': ['.txt', '.md', '.mdx', '.pdf'],
-            'text/json': ['.json']
+            'text/txt': ['.txt', '.js', '.ts', '.md', '.mdx', '.pdf'],
+            'text/json': ['.json', '.js', '.ts', '.md', '.mdx', '.pdf'],
+            'text/javascript': ['.txt', '.js', '.ts', '.md', '.mdx', '.pdf'],
+            'application/javascript': ['.txt', '.js', '.ts', '.md', '.mdx', '.pdf'],
+            'application/typescript': ['.txt', '.js', '.ts', '.md', '.mdx', '.pdf'],
         }
     });
 

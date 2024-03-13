@@ -113,6 +113,8 @@ class GithubReader(Reader):
                 or item["path"].endswith(".mdx")
                 or item["path"].endswith(".txt")
                 or item["path"].endswith(".json")
+                or item["path"].endswith(".js")
+                or item["path"].endswith(".ts")
             )
         ]
         msg.info(

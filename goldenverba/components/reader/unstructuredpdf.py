@@ -93,7 +93,7 @@ class UnstructuredPDF(Reader):
         documents = []
 
         url = os.environ.get(
-            "UNSTRUCTURED_API_URL", "https://api.unstructured.io/general/v0/general"
+            "UNSTRUCTURED_API_URL", "https://roelljrgmailcom-8f25d74c.api.unstructuredapp.io/general/v0/general"
         )
 
         headers = {
@@ -143,12 +143,13 @@ class UnstructuredPDF(Reader):
         """
         documents = []
 
+        print("Here!")
         if file_path.suffix not in self.file_types:
             msg.warn(f"{file_path.suffix} not supported")
             return []
 
         url = os.environ.get(
-            "UNSTRUCTURED_API_URL", "https://api.unstructured.io/general/v0/general"
+            "UNSTRUCTURED_API_URL", "https://roelljrgmailcom-8f25d74c.api.unstructuredapp.io/general/v0/general"
         )
 
         headers = {
@@ -161,7 +162,7 @@ class UnstructuredPDF(Reader):
         }
 
         file_data = {"files": open(file_path, "rb")}
-
+        print("URL: ", url)
         response = requests.post(url, headers=headers, data=data, files=file_data)
 
         file_data["files"].close()

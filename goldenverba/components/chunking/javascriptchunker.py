@@ -1,0 +1,125 @@
+import contextlib
+
+
+from langcodes import Language
+from tqdm import tqdm
+from wasabi import msg
+
+with contextlib.suppress(Exception):
+    import spacy
+
+from goldenverba.components.chunking.chunk import Chunk
+from goldenverba.components.chunking.interface import Chunker
+from goldenverba.components.reader.document import Document
+from goldenverba.components.reader.interface import InputForm
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+
+class JavascriptChunker(Chunker):
+    """
+    JavascriptChunker for Verba built with spaCy.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.name = "JavascriptChunker"
+        self.requires_library = ["spacy"]
+        self.default_units = 2000
+        self.default_overlap = 0
+        self.description = "Chunk documents by Javascript Code Segments."
+        try:
+            self.nlp = spacy.blank("en")
+            self.nlp.add_pipe("codizer")
+        except:
+            self.nlp = None
+
+
+    def chunk(
+        self, documents: list[Document], units: int, overlap: int
+    ) -> list[Document]:
+        """Chunk verba documents into chunks based on units and overlap
+        @parameter: documents : list[Document] - List of Verba documents
+        @parameter: units : int - How many units per chunk (words, sentences, etc.)
+        @parameter: overlap : int - How much overlap between the chunks
+        @returns list[str] - List of documents that contain the chunks.
+        """
+        for document in tqdm(
+            documents, total=len(documents), desc="Chunking documents"
+        ):
+            # Skip if document already contains chunks
+            if len(document.chunks) > 0:
+                continue
+
+            doc = list(self.nlp(document.text).sents)
+
+            if units > len(doc) or units < 1:
+                msg.warn(
+                    f"Unit value either exceeds length of actual document or is below 1 ({units}/{len(doc)})"
+                )
+                continue
+
+            splitter = RecursiveCharacterTextSplitter.from_language(language='js',
+                chunkSize= units, overlap=overlap, keepSeparator=True)
+            document.chunks = splitter.split_documents(doc);
+
+        return documents
+
+
+    #def chunk_old(
+    #    self, documents: list[Document], units: int, overlap: int
+    #) -> list[Document]:
+    #    """Chunk verba documents into chunks based on units and overlap
+    #    @parameter: documents : list[Document] - List of Verba documents
+    #    @parameter: units : int - How many units per chunk (words, sentences, etc.)
+    #    @parameter: overlap : int - How much overlap between the chunks
+    #    @returns list[str] - List of documents that contain the chunks.
+    #    """
+    #    for document in tqdm(
+    #        documents, total=len(documents), desc="Chunking documents"
+    #    ):
+    #        # Skip if document already contains chunks
+    #        if len(document.chunks) > 0:
+    #            continue
+
+    #        doc = list(self.nlp(document.text).sents)
+
+    #        if units > len(doc) or units < 1:
+    #            msg.warn(
+    #                f"Unit value either exceeds length of actual document or is below 1 ({units}/{len(doc)})"
+    #            )
+    #            continue
+
+    #        if overlap >= units:
+    #            msg.warn(
+    #                f"Overlap value is greater than unit (Units {units}/ Overlap {overlap})"
+    #            )
+    #            continue
+
+    #        i = 0
+    #        split_id_counter = 0
+    #        while i < len(doc):
+    #            # Overlap
+    #            start_i = i
+    #            end_i = i + units
+    #            if end_i > len(doc):
+    #                end_i = len(doc)  # Adjust for the last chunk
+
+    #            text = ""
+    #            for sent in doc[start_i:end_i]:
+    #                text += sent.text
+
+    #            doc_chunk = Chunk(
+    #                text=text,
+    #                doc_name=document.name,
+    #                doc_type=document.type,
+    #                chunk_id=split_id_counter,
+    #            )
+    #            document.chunks.append(doc_chunk)
+    #            split_id_counter += 1
+
+    #            # Exit loop if this was the last possible chunk
+    #            if end_i == len(doc):
+    #                break
+
+    #            i += units - overlap  # Step forward, considering overlap
+
+    #    return documents

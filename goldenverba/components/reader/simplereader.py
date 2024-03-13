@@ -17,7 +17,7 @@ class SimpleReader(Reader):
 
     def __init__(self):
         super().__init__()
-        self.file_types = [".txt", ".md", ".mdx", ".json"]
+        self.file_types = [".txt", ".md", ".mdx", ".json", ".js", ".ts"]
         self.name = "SimpleReader"
         self.description = "Reads text, markdown, and json files."
         self.input_form = InputForm.UPLOAD.value
